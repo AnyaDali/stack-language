@@ -1,0 +1,9 @@
+push 12
+pop x ;x = 12
+push 13
+pop y
+push x
+push y
++
+write
+end
