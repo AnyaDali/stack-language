@@ -120,12 +120,19 @@ void initialize_table()
     table_funtion[s_J1][EndOfFile] = Exit1;
 
     table_funtion[s_P1][Digit] = Q1a;
+    table_funtion[s_P1][Space] = P1;
+    table_funtion[s_P1][RBracket] = S1;
+
+    table_funtion[s_P2][Space] = P2;
+    table_funtion[s_P2][Digit] = Q1a;
+    table_funtion[s_P2][RBracket] = S1;
 
     table_funtion[s_Q1][RBracket] = S1a;
     table_funtion[s_Q1][Digit] = Q1b;
-    table_funtion[s_Q1][Comma] = Q2;
+    table_funtion[s_Q1][Space] = Q2;
 
     table_funtion[s_Q2][Digit] = Q1a;
+    table_funtion[s_Q2][Space] = P2;
 
     table_funtion[s_S1][Space] = S1b;
     table_funtion[s_S1][LF] = A2a;

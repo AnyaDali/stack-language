@@ -1,12 +1,18 @@
 #include <iostream>
 #include <fstream>
-
+#include <unordered_set>
 #include <stack>
 #include "List.h"
 #include "initialize_table.h"
 
 using namespace std;
 
+void parse_line(std::string && line, int & state) {
+    for(auto cur_ch : line) {
+        s = transliterator(cur_ch); // определяем символьную лексему 
+        state = (*table_funtion[state][s.token_class])();
+    }
+}
 
 void parse(const char *filename)
 {
@@ -21,15 +27,15 @@ void parse(const char *filename)
     
     char ch;         
     int state = s_A1;
-    while (state != s_Stop && !flag_end)
+    std::string curr_line;
+    while (!buff.eof())
     {
-        ch = buff.get(); //считываем текущий символ 
-        s = transliterator(ch); // определяем символьную лексему 
-        if (flag_end == 1) 
-            break;
-        state = (*table_funtion[state][s.token_class])();
+        std::getline(buff, curr_line);
+        curr_line += "\n";
+        parse_line(std::move(curr_line), state);
     }
-    int c = (obj.end() - 1)->class_register;
+    std::cout <<"name = "<< obj.back().name << std::endl;
+    /*int c = (obj.end() - 1)->class_register;
     if ((c == PUSH && (obj.end() - 1)->const_flag == 1) || c == JMP || c == JI || (c == ITEM && (obj.end() - 1)->const_flag == 1))
         Exit2();
     else if ((c == PUSH && (obj.end() - 1)->const_flag == 0) || c == POP || (c == ITEM && (obj.end() - 1)->const_flag == 0))
@@ -37,7 +43,7 @@ void parse(const char *filename)
     else if (c == ATTITUDE && ((obj.end() - 1)->value == LESS || (obj.end() - 1)->value == MORE || (obj.end() - 1)->value == EQUAL))
         Exit4();
     else
-        Exit1();
+        Exit1();*/
     cout << "\n";
 
     buff.close();
@@ -84,7 +90,7 @@ void PrintObj()
             cout << "READ ";
         else if (it->class_register == WRITE)
             cout << "WRITE ";
-        else if (it->class_register == POP) //��������� � ���������� ��������
+        else if (it->class_register == POP) 
             cout << "POP " << it->name;
         else if (it->class_register == PUSH)
         {
@@ -176,14 +182,14 @@ void DataProcessing()
 {
     if (flag_Error == 1)
         return;
-    //������ �� ������ ������
+
     for (vector<classToken>::iterator it = obj.begin(); it != obj.end(); ++it)
     {
         if (it->class_register == OPERATION)
         {
             if (x.size() < 2)
             {
-                cout << "������ ���������� ��������" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the OPERATOR " << (char)it->value <<  endl;
                 return;
             }
             Var v1, v2;
@@ -214,7 +220,7 @@ void DataProcessing()
         {
             if (x.size() < 2)
             {
-                cout << "������ ���������� ���������" << endl;
+                cout << "" << endl;
                 return;
             }
 
@@ -228,7 +234,7 @@ void DataProcessing()
                 x.pop();
                 if (v1.type != 0 || v2.type != 0)
                 {
-                    cout << "������. ��� ������ �� ������������ �����" << endl;
+                    cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the RATIO " << endl;
                     return;
                 }
                 if (it->value == LESS)
@@ -271,7 +277,7 @@ void DataProcessing()
         {
             Var k;
             k.type = 0;
-            cout << "������� �����: ";
+            cout << "enter a number:";
             cin >> k.num;
             x.push(k);
         }
@@ -279,7 +285,7 @@ void DataProcessing()
         {
             if (x.size() < 1)
             {
-                cout << "������. ���������� �������� WRITE � ������� �����" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the WRITE" << endl;
                 return;
             }
             if (x.top().type == 0)
@@ -293,7 +299,7 @@ void DataProcessing()
         {
             if (x.size() < 1)
             {
-                cout << "������. ���������� �������� POP � ������� �����" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the POP" << endl;
                 return;
             }
             if (x.top().type == 0)
@@ -360,10 +366,6 @@ void DataProcessing()
             }
             if (it->const_flag == 0)
             {
-                /*
-                ���� ��������� - ����������.
-                ������ � �������� �� ������� ����������.
-                */
                 auto iter = FindElem(it->name);
                 if (iter == t.end())
                 {
@@ -405,7 +407,7 @@ void DataProcessing()
         {
             Var k;
             List li1;
-            cout << "������� ������: ";
+            cout << "enter a multiset:";
             cin >> li1;
             k.type = 1;
             k.li = li1;
@@ -415,7 +417,7 @@ void DataProcessing()
         {
             if (x.size() < 1)
             {
-                cout << "������. ���������� �������� ADD � ������� �����" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the ADD" << endl;
                 return;
             }
             if (x.top().type != 1)
@@ -435,7 +437,7 @@ void DataProcessing()
         {
             if (x.size() < 2)
             {
-                cout << "������. ���������� �������� DIFF" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the DIFF" << endl;
                 return;
             }
             Var res;
@@ -462,7 +464,7 @@ void DataProcessing()
         {
             if (x.size() < 2)
             {
-                cout << "������. ���������� �������� SYMM" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the SYMM" << endl;
                 return;
             }
             Var res;
@@ -489,7 +491,7 @@ void DataProcessing()
         {
             if (x.size() < 2)
             {
-                cout << "������. ���������� �������� UNION" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the UNION" << endl;
                 return;
             }
             Var res;
@@ -516,7 +518,8 @@ void DataProcessing()
         {
             if (x.size() < 2)
             {
-                cout << "������. ���������� �������� INTERSEC" << endl;
+                 
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the INTERSEC" << endl;
                 return;
             }
             Var res;
@@ -543,7 +546,7 @@ void DataProcessing()
         {
             if (x.size() < 1)
             {
-                cout << "������. ���������� �������� ITEM" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the ITEM" << endl;
                 return;
             }
             if (x.top().type != 1)
@@ -583,7 +586,7 @@ void DataProcessing()
         {
             if (x.size() < 1)
             {
-                cout << "������. ���������� �������� POWER" << endl;
+                cout << "RUNTIME ERROR. line: " << it->str << "\nthere are not enough arguments to apply the POWER" << endl;
                 return;
             }
             if (x.top().type != 1)

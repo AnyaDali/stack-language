@@ -128,6 +128,7 @@ int A2c()
 
 int A2d()
 {
+    std::cout << "A2d" << std::endl;
     (obj.end() - 1)->name = name;
     if (!name.empty())
         name.clear();
@@ -687,12 +688,17 @@ int M1()
         return Error1();
 }
 
+// парсим список 
 int P1()
 {
     if ((obj.end() - 1)->class_register != PUSH)
         return Error1();
     (obj.end() - 1)->const_flag = 1;
     (obj.end() - 1)->type = 1;
+    return s_P1;
+}
+
+int P1a() {
     return s_P1;
 }
 
@@ -716,7 +722,15 @@ int Q1b()
 int Q2()
 {
     (obj.end() - 1)->li.push_back(number_register);
+    return P2();
+}
+
+int Q2a() {
     return s_Q2;
+}
+
+int S1() {
+    return s_S1;
 }
 
 int S1a()
