@@ -3,13 +3,14 @@
 #define FUNCTION_SM_H
 #include <vector>
 #include <string>
+#include "hash_mset.h"
 using namespace std;
 
 struct classToken
 {
     int class_register; // ������� ������
     int type;           //0 - �����, 1 - ������
-    List li;
+    hash_set li;
     int const_flag; // ���� ���������: 1 - ���������, 0 - ���������� 3 - ���������� ��������� � ���������
     string name;    // ��� ����������
     int value;      // �������� ���������
@@ -721,7 +722,7 @@ int Q1b()
 
 int Q2()
 {
-    (obj.end() - 1)->li.push_back(number_register);
+    (obj.end() - 1)->li.insert(number_register);
     return P2();
 }
 
@@ -735,7 +736,7 @@ int S1() {
 
 int S1a()
 {
-    (obj.end() - 1)->li.push_back(number_register);
+    (obj.end() - 1)->li.insert(number_register);
     return s_S1;
 }
 
